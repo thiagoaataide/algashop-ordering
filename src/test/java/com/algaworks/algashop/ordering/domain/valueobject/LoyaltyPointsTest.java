@@ -30,4 +30,14 @@ class LoyaltyPointsTest {
         Assertions.assertThat(loyaltyPoints.value()).isEqualTo(50);
     }
 
+    @Test
+    void shouldNotAddValueZero(){
+        LoyaltyPoints loyaltyPoints = new LoyaltyPoints(50);
+
+        Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(()->loyaltyPoints.add(0));
+
+        Assertions.assertThat(loyaltyPoints.value()).isEqualTo(50);
+    }
+
 }
