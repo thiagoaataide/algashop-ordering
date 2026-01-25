@@ -1,0 +1,29 @@
+package com.algaworks.algashop.ordering.domain.valueobject;
+
+import java.io.Serializable;
+import java.util.Objects;
+
+public record Quantity(Integer value) implements Serializable, Comparable<Quantity> {
+
+    public Quantity {
+        Objects.requireNonNull(value);
+        if (value < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public Quantity add(Quantity quantity) {
+        Objects.requireNonNull(quantity);
+        return new Quantity(this.value + quantity.value());
+    }
+
+    @Override
+    public int compareTo(Quantity o) {
+        return this.value.compareTo(o.value);
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
+    }
+}
