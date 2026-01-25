@@ -1,6 +1,7 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
 import com.algaworks.algashop.ordering.domain.valueobject.*;
+import com.algaworks.algashop.ordering.domain.valueobject.id.CustomerId;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -28,7 +29,7 @@ public class CustomerTesteDataBuilder {
 
     public static Customer.ExistingCustomerBuilder existingCustomer(){
         return Customer.existing()
-                .id(new CustomerID())
+                .id(new CustomerId())
                 .fullName(new FullName("John", "Doe"))
                 .birthDate(new BirthDate(LocalDate.of(1990, 1, 1)))
                 .email(new Email("john.doe@gmail.com"))
@@ -54,7 +55,7 @@ public class CustomerTesteDataBuilder {
 
     public static Customer.ExistingCustomerBuilder existingAnonymized(){
         return Customer.existing()
-                .id(new CustomerID())
+                .id(new CustomerId())
                 .fullName(new FullName("Anonymous", "Anonymous"))
                 .birthDate(null)
                 .email(new Email("anonymous@anonymous.com"))
