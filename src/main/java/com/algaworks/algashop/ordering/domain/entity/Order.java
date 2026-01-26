@@ -1,5 +1,6 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
+import com.algaworks.algashop.ordering.domain.exception.OrderStatusCannotBeChangedException;
 import com.algaworks.algashop.ordering.domain.valueobject.*;
 import com.algaworks.algashop.ordering.domain.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.valueobject.id.OrderId;
@@ -7,6 +8,7 @@ import com.algaworks.algashop.ordering.domain.valueobject.id.OrderItemId;
 import com.algaworks.algashop.ordering.domain.valueobject.id.ProductId;
 import lombok.Builder;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -54,7 +56,7 @@ public class Order {
         this.setItems(items);
     }
 
-    public static Order draft(CustomerId customerId){
+    public static Order draft(CustomerId customerId) {
         return new Order(
                 new OrderId(),
                 customerId,
@@ -75,7 +77,7 @@ public class Order {
     }
 
     public void addItem(ProductId productId, ProductName productName,
-                        Quantity quantity, Money price){
+                        Quantity quantity, Money price) {
         OrderItem orderItem = OrderItem.brandNew()
                 .orderId(this.id)
                 .price(price)
@@ -84,11 +86,55 @@ public class Order {
                 .productName(productName)
                 .build();
 
-        if(this.items == null){
+        if (this.items == null) {
             this.items = new HashSet<>();
         }
 
         this.items.add(orderItem);
+
+        this.recalculateTotals();
+    }
+
+    public void place() {
+        //TODO Business rules
+        this.changeStatus(OrderStatus.PLACED);
+    }
+
+    private void changeStatus(OrderStatus newStatus) {
+        Objects.requireNonNull(newStatus);
+        if (this.status().canNotChangeTo(newStatus)) {
+            throw new OrderStatusCannotBeChangedException(this.id(), this.status(), newStatus);
+        }
+        this.setStatus(newStatus);
+    }
+
+    public boolean isDraft() {
+        return OrderStatus.DRAFT.equals(this.status());
+    }
+
+    public boolean isPlaced() {
+        return OrderStatus.PLACED.equals(this.status());
+    }
+
+
+    private void recalculateTotals() {
+        BigDecimal totalItemsAmount = this.items.stream().map(i -> i.totalAmount().value())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        Integer totalItemsQuantity = this.items.stream().map(i -> i.quantity().value())
+                .reduce(0, Integer::sum);
+
+        BigDecimal shippingCost;
+        if (this.shippingCost() == null) {
+            shippingCost = BigDecimal.ZERO;
+        } else {
+            shippingCost = this.shippingCost().value();
+        }
+
+        BigDecimal totalAmount = totalItemsAmount.add(shippingCost);
+
+        this.setTotalAmount(new Money(totalAmount));
+        this.setTotalItems(new Quantity(totalItemsQuantity));
     }
 
     private void setId(OrderId id) {

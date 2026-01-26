@@ -35,7 +35,8 @@ public class OrderItem {
     @Builder(builderClassName = "BrandOrderItemBuilder", builderMethodName = "brandNew")
     private static OrderItem createBrandNew( OrderId orderId, ProductId productId,
                      ProductName productName, Quantity quantity, Money price) {
-        return new OrderItem(
+
+        OrderItem orderItem = new OrderItem(
                 new OrderItemId(),
                 orderId,
                 productId,
@@ -45,6 +46,12 @@ public class OrderItem {
                 Money.ZERO
         );
 
+        orderItem.recalculateTotals();
+        return orderItem;
+    }
+
+    private void recalculateTotals(){
+        this.setTotalAmount(this.price().multiply(this.quantity()));
     }
 
     private void setId(OrderItemId id) {
