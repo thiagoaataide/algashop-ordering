@@ -1,15 +1,15 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
 
+import com.algaworks.algashop.ordering.domain.exception.OrderInvalidShippingDeliveryDateException;
 import com.algaworks.algashop.ordering.domain.exception.OrderStatusCannotBeChangedException;
-import com.algaworks.algashop.ordering.domain.valueobject.Money;
-import com.algaworks.algashop.ordering.domain.valueobject.ProductName;
-import com.algaworks.algashop.ordering.domain.valueobject.Quantity;
+import com.algaworks.algashop.ordering.domain.valueobject.*;
 import com.algaworks.algashop.ordering.domain.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.valueobject.id.ProductId;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 class OrderTest {
@@ -92,5 +92,106 @@ class OrderTest {
         order.place();
         Assertions.assertThatExceptionOfType(OrderStatusCannotBeChangedException.class)
                 .isThrownBy(order::place);
+    }
+
+    @Test
+    public void givenDraftOrder_whenChangePaymentMethod_souldAllowed(){
+        Order order = Order.draft(new CustomerId());
+        order.changePaymentMethod(PaymentMethod.CREDIT_CARD);
+        Assertions.assertThat(order.paymentMethod()).isEqualTo(PaymentMethod.CREDIT_CARD);
+    }
+
+    @Test
+    public void givenDraftOrder_whenChangeBillingInfo_shouldAllowChange(){
+        Address address = Address.builder()
+                .street("Av. Joaquim José Diniz")
+                .number("20")
+                .neighborhood("Fernão Dias")
+                .complementm("Torre 03 Apto 801")
+                .city("Belo Horizonte")
+                .state("Minas Gerais")
+                .zipCode(new ZipCode("31910"))
+                .build();
+
+        BillingInfo billingInfo = BillingInfo.builder()
+                .address(address)
+                .document(new Document("083.388.654-19"))
+                .phone(new Phone("31 99195-3046"))
+                .fullName(new FullName("Thiago", "Alberto"))
+                .build();
+
+        Order order = Order.draft(new CustomerId());
+        order.changeBillingInfo(billingInfo);
+
+        BillingInfo expectedBillingInfo = BillingInfo.builder()
+                .address(address)
+                .document(new Document("083.388.654-19"))
+                .phone(new Phone("31 99195-3046"))
+                .fullName(new FullName("Thiago", "Alberto"))
+                .build();
+
+        Assertions.assertThat(order.billing()).isEqualTo(expectedBillingInfo);
+    }
+
+    @Test
+    public void givenDraftOrder_whenChangeShippingInfo_shouldAllowChange(){
+        Address address = Address.builder()
+                .street("Av. Joaquim José Diniz")
+                .number("20")
+                .neighborhood("Fernão Dias")
+                .complementm("Torre 03 Apto 801")
+                .city("Belo Horizonte")
+                .state("Minas Gerais")
+                .zipCode(new ZipCode("31910"))
+                .build();
+
+        ShippingInfo shippingInfo = ShippingInfo.builder()
+                .fullName(new FullName("Thiago", "Alberto"))
+                .document(new Document("083.388.654-19"))
+                .phone(new Phone("31 99195-3046"))
+                .address(address)
+                .build();
+
+        Order order = Order.draft(new CustomerId());
+        Money shippingCost = Money.ZERO;
+        LocalDate expectedDeliveryDate = LocalDate.now().plusDays(1);
+
+        order.changeShipping(shippingInfo, shippingCost, expectedDeliveryDate);
+
+        Assertions.assertWith(order,
+                o-> Assertions.assertThat(o.shipping()).isEqualTo(shippingInfo),
+                o-> Assertions.assertThat(o.shippingCost()).isEqualTo(shippingCost),
+                o-> Assertions.assertThat(o.expectedDeliveryDate()).isEqualTo(expectedDeliveryDate)
+                );
+    }
+
+
+    @Test
+    public void givenDraftOrderAndDeliveryDateInThePast_whenChangeShippingInfo_shouldNotAllowChange(){
+        Address address = Address.builder()
+                .street("Av. Joaquim José Diniz")
+                .number("20")
+                .neighborhood("Fernão Dias")
+                .complementm("Torre 03 Apto 801")
+                .city("Belo Horizonte")
+                .state("Minas Gerais")
+                .zipCode(new ZipCode("31910"))
+                .build();
+
+        ShippingInfo shippingInfo = ShippingInfo.builder()
+                .fullName(new FullName("Thiago", "Alberto"))
+                .document(new Document("083.388.654-19"))
+                .phone(new Phone("31 99195-3046"))
+                .address(address)
+                .build();
+
+        Order order = Order.draft(new CustomerId());
+        Money shippingCost = Money.ZERO;
+        LocalDate expectedDeliveryDate = LocalDate.now().minusDays(2);
+
+        Assertions.assertThatExceptionOfType(OrderInvalidShippingDeliveryDateException.class)
+                .isThrownBy(()->order.changeShipping(shippingInfo, shippingCost, expectedDeliveryDate));
+
+
     }
 }
