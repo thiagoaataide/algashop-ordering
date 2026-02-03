@@ -1,9 +1,6 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
-import com.algaworks.algashop.ordering.domain.exception.OrderCannotBePlacedException;
-import com.algaworks.algashop.ordering.domain.exception.OrderDoesNotContainOrderItemException;
-import com.algaworks.algashop.ordering.domain.exception.OrderInvalidShippingDeliveryDateException;
-import com.algaworks.algashop.ordering.domain.exception.OrderStatusCannotBeChangedException;
+import com.algaworks.algashop.ordering.domain.exception.*;
 import com.algaworks.algashop.ordering.domain.valueobject.*;
 import com.algaworks.algashop.ordering.domain.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.valueobject.id.OrderId;
@@ -76,6 +73,8 @@ public class Order {
         Objects.requireNonNull(product);
         Objects.requireNonNull(quantity);
 
+        this.verifyIfChangeable();
+
         product.checkOutOfStock();
 
         OrderItem orderItem = OrderItem.brandNew()
@@ -107,17 +106,19 @@ public class Order {
 
     public void changePaymentMethod(PaymentMethod paymentMethod) {
         Objects.requireNonNull(paymentMethod);
+        this.verifyIfChangeable();
         this.setPaymentMethod(paymentMethod);
     }
 
-    public void changeBillingInfo(Billing billing) {
+    public void changeBilling(Billing billing) {
         Objects.requireNonNull(billing);
+        this.verifyIfChangeable();
         this.setBilling(billing);
     }
 
     public void changeShipping(Shipping newShipping) {
         Objects.requireNonNull(newShipping);
-
+        this.verifyIfChangeable();
         if (newShipping.expectedDate().isBefore(LocalDate.now())) {
             throw new OrderInvalidShippingDeliveryDateException(this.id());
         }
@@ -128,6 +129,7 @@ public class Order {
     public void changeItemQuantity(OrderItemId orderItemId, Quantity quantity) {
         Objects.requireNonNull(orderItemId);
         Objects.requireNonNull(quantity);
+        this.verifyIfChangeable();
 
         OrderItem orderItem = this.findOrderItem(orderItemId);
         orderItem.changeQuantity(quantity);
@@ -137,9 +139,9 @@ public class Order {
     private OrderItem findOrderItem(OrderItemId orderItemId) {
         Objects.requireNonNull(orderItemId);
         return this.items().stream()
-                .filter(i-> i.id().equals(orderItemId))
+                .filter(i -> i.id().equals(orderItemId))
                 .findFirst()
-                .orElseThrow(()-> new OrderDoesNotContainOrderItemException(this.id(), orderItemId));
+                .orElseThrow(() -> new OrderDoesNotContainOrderItemException(this.id(), orderItemId));
     }
 
 
@@ -149,6 +151,12 @@ public class Order {
             throw new OrderStatusCannotBeChangedException(this.id(), this.status(), newStatus);
         }
         this.setStatus(newStatus);
+    }
+
+    private void verifyIfChangeable() {
+        if (!this.isDraft()) {
+            throw new OrderCannotBeEditedException(this.id(), this.status());
+        }
     }
 
     public boolean isDraft() {

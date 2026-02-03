@@ -1,9 +1,7 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
 
-import com.algaworks.algashop.ordering.domain.exception.OrderInvalidShippingDeliveryDateException;
-import com.algaworks.algashop.ordering.domain.exception.OrderStatusCannotBeChangedException;
-import com.algaworks.algashop.ordering.domain.exception.ProductOutOfStockException;
+import com.algaworks.algashop.ordering.domain.exception.*;
 import com.algaworks.algashop.ordering.domain.valueobject.*;
 import com.algaworks.algashop.ordering.domain.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.valueobject.id.ProductId;
@@ -108,7 +106,7 @@ class OrderTest {
         Billing billing = OrderTestDataBuilder.aBilling();
 
         Order order = Order.draft(new CustomerId());
-        order.changeBillingInfo(billing);
+        order.changeBilling(billing);
 
 
         Assertions.assertThat(order.billing()).isEqualTo(billing);
@@ -166,5 +164,33 @@ class OrderTest {
         Order order = Order.draft(new CustomerId());
         Assertions.assertThatExceptionOfType(ProductOutOfStockException.class)
                 .isThrownBy(() -> order.addItem(ProductTestDataBuilder.aProductUnavailable().build(), new Quantity(1)));
+    }
+
+    @Test
+    public void givenDraftOrder_whenPlacedAndTryToChangeOrder_shouldThrowOrderCannotBeEditedException() {
+        Order order = OrderTestDataBuilder.anOrder().build();
+        order.place();
+
+        Shipping shipping = OrderTestDataBuilder.aShippingAlt();
+        Billing billing = OrderTestDataBuilder.aBilling();
+        PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD;
+        Product product = ProductTestDataBuilder.aProductMousePad().build();
+        Quantity productQuantity = new Quantity(1);
+
+
+        Assertions.assertThatExceptionOfType(OrderCannotBeEditedException.class)
+                .isThrownBy(() -> order.changePaymentMethod(paymentMethod));
+
+        Assertions.assertThatExceptionOfType(OrderCannotBeEditedException.class)
+                .isThrownBy(() -> order.changeShipping(shipping));
+
+        Assertions.assertThatExceptionOfType(OrderCannotBeEditedException.class)
+                .isThrownBy(() -> order.changeBilling(billing));
+
+        Assertions.assertThatExceptionOfType(OrderCannotBeEditedException.class)
+                .isThrownBy(() -> order.changeItemQuantity(order.items().iterator().next().id(), productQuantity));
+
+        Assertions.assertThatExceptionOfType(OrderCannotBeEditedException.class)
+                .isThrownBy(() -> order.addItem(product, productQuantity));
     }
 }

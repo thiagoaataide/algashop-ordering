@@ -30,7 +30,7 @@ public class OrderFactory {
 
         Order order = Order.draft(customerId);
         order.changeShipping(shipping);
-        order.changeBillingInfo(billing);
+        order.changeBilling(billing);
         order.changePaymentMethod(paymentMethod);
         order.addItem(product, productQuantity);
 
