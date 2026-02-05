@@ -193,4 +193,16 @@ class OrderTest {
         Assertions.assertThatExceptionOfType(OrderCannotBeEditedException.class)
                 .isThrownBy(() -> order.addItem(product, productQuantity));
     }
+
+    @Test
+    public void givenDraftOrderWithMoreThanOneItem_whenTryToRemoveAnExistingItem_shouldRemove(){
+        Order order = OrderTestDataBuilder.anOrder().withItems(false).build();
+
+
+
+//        Assertions.assertThat(order.items()).hasSize(2);
+//        Assertions.assertThat(order.items()).doesNotContain(orderItem);
+//        Assertions.assertThat(order.totalItems()).isEqualTo(new Quantity(3));
+//        Assertions.assertThat(order.totalAmount()).isEqualTo(new Money("2710"));
+    }
 }
