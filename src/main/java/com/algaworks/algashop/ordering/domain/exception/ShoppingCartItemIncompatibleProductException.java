@@ -5,6 +5,6 @@ import com.algaworks.algashop.ordering.domain.valueobject.id.ShoppingCartItemId;
 
 public class ShoppingCartItemIncompatibleProductException extends DomainExcpetion {
     public ShoppingCartItemIncompatibleProductException(ShoppingCartItemId id, ProductId productId) {
-        super(id, productId);
+        super(String.format(ErrorMessages.ERROR_SHOPPING_CART_ITEM_INCOMPATIBLE_PRODUCT, id, productId));
     }
 }

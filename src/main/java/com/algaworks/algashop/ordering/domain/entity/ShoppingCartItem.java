@@ -63,6 +63,10 @@ public class ShoppingCartItem {
         this.recalculateTotals();
     }
 
+    public Boolean isAvailable() {
+        return available;
+    }
+
     private void recalculateTotals() {
         this.setTotalAmount(price.multiply(quantity));
     }
