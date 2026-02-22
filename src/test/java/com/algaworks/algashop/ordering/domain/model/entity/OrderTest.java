@@ -1,7 +1,6 @@
 package com.algaworks.algashop.ordering.domain.model.entity;
 
 
-import com.algaworks.algashop.ordering.domain.exception.*;
 import com.algaworks.algashop.ordering.domain.model.exception.OrderCannotBeEditedException;
 import com.algaworks.algashop.ordering.domain.model.exception.OrderInvalidShippingDeliveryDateException;
 import com.algaworks.algashop.ordering.domain.model.exception.OrderStatusCannotBeChangedException;

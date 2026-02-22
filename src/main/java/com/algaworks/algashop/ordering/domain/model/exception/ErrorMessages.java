@@ -1,5 +1,7 @@
 package com.algaworks.algashop.ordering.domain.model.exception;
 
+import java.util.Locale;
+
 public class ErrorMessages {
     public static final String VALIDATION_ERROR_EMAIL_IS_INVALID = "Email is invalid";
     public static final String VALIDATION_ERROR_FULLNAME_IS_NULL = "FullName cannot be null";
@@ -21,4 +23,6 @@ public class ErrorMessages {
 
 
     public static final String ERROR_SHOPPING_CART_DOES_NOT_CONTAIN_SHOPPING_CART_ITEM = "Shopping Cart %s does not contain item %s";
+    public static final String ERROR_SHOPPING_CART_DOES_NOT_CONTAIN_PRODUCT = "Shopping Cart %s does not contain product %s";
+    public static final String ERROR_SHOPPING_CART_ITEM_INCOMPATIBLE_PRODUCT = "Shopping Cart %s cannot be updated, incompatible product %s";
 }
