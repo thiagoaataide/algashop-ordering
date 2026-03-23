@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public record Address(
         String street,
-        String complementm,
+        String complement,
         String neighborhood,
         String number,
         String city,
