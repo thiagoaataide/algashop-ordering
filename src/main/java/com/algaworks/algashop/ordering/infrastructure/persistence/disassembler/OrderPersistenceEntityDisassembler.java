@@ -44,7 +44,7 @@ public class OrderPersistenceEntityDisassembler {
         return Billing.builder()
                 .fullName(new FullName(billingEmbeddable.getFirstName(), billingEmbeddable.getLastName()))
                 .phone(new Phone(billingEmbeddable.getPhone()))
-                .email(null)
+                .email(new Email(billingEmbeddable.getEmail()))
                 .address(toAddress(billingEmbeddable.getAddress()))
                 .build();
 
