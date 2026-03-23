@@ -38,11 +38,12 @@ public class OrderPersistenceEntityDisassembler {
 
 
     private Billing toBillingValueObject(BillingEmbeddable billingEmbeddable) {
-        if (billingEmbeddable != null) {
+        if (billingEmbeddable == null) {
             return null;
         }
         return Billing.builder()
                 .fullName(new FullName(billingEmbeddable.getFirstName(), billingEmbeddable.getLastName()))
+                .document(new Document(billingEmbeddable.getDocument()))
                 .phone(new Phone(billingEmbeddable.getPhone()))
                 .email(new Email(billingEmbeddable.getEmail()))
                 .address(toAddress(billingEmbeddable.getAddress()))
@@ -52,7 +53,7 @@ public class OrderPersistenceEntityDisassembler {
 
 
     private Shipping toShippingValueObject(ShippingEmbeddable shippingEmbeddable) {
-        if (shippingEmbeddable != null) {
+        if (shippingEmbeddable == null) {
             return null;
         }
 
@@ -76,7 +77,7 @@ public class OrderPersistenceEntityDisassembler {
     }
 
     private Address toAddress(AddressEmbeddable addressEmbeddable) {
-        if (addressEmbeddable != null) {
+        if (addressEmbeddable == null) {
             return null;
         }
 
