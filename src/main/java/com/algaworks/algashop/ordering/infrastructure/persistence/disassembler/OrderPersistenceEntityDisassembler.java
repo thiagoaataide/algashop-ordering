@@ -1,18 +1,24 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.disassembler;
 
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
+import com.algaworks.algashop.ordering.domain.model.entity.OrderItem;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderStatus;
 import com.algaworks.algashop.ordering.domain.model.entity.PaymentMethod;
 import com.algaworks.algashop.ordering.domain.model.valueobject.*;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderId;
+import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderItemId;
+import com.algaworks.algashop.ordering.domain.model.valueobject.id.ProductId;
 import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.AddressEmbeddable;
 import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.BillingEmbeddable;
 import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.ShippingEmbeddable;
+import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class OrderPersistenceEntityDisassembler {
@@ -33,6 +39,23 @@ public class OrderPersistenceEntityDisassembler {
                 .version(persistenceEntity.getVersion())
                 .billing(toBillingValueObject(persistenceEntity.getBilling()))
                 .shipping(toShippingValueObject(persistenceEntity.getShipping()))
+                .items(toDomainEntities(persistenceEntity.getItems()))
+                .build();
+    }
+
+    private Set<OrderItem> toDomainEntities(Set<OrderItemPersistenceEntity> items) {
+        return items.stream().map(i -> toDomainEntity(i)).collect(Collectors.toSet());
+    }
+
+    private OrderItem toDomainEntity(OrderItemPersistenceEntity persistenceEntity) {
+        return OrderItem.existing()
+                .id(new OrderItemId(persistenceEntity.getId()))
+                .orderId(new OrderId(persistenceEntity.getOrderId()))
+                .productId(new ProductId(persistenceEntity.getProductId()))
+                .productName(new ProductName(persistenceEntity.getProductName()))
+                .quantity(new Quantity(persistenceEntity.getQuantity()))
+                .price(new Money(persistenceEntity.getPrice()))
+                .totalAmount(new Money(persistenceEntity.getTotalAmount()))
                 .build();
     }
 
@@ -62,7 +85,7 @@ public class OrderPersistenceEntityDisassembler {
                 .expectedDate(shippingEmbeddable.getExpectedDate())
                 .address(toAddress(shippingEmbeddable.getAddress()));
 
-        if(shippingEmbeddable.getRecipient() != null){
+        if (shippingEmbeddable.getRecipient() != null) {
             Recipient recipient = Recipient.builder()
                     .fullName(new FullName(shippingEmbeddable.getRecipient().getFirstName(), shippingEmbeddable.getRecipient().getLastName()))
                     .document(new Document(shippingEmbeddable.getRecipient().getDocument()))
@@ -81,7 +104,7 @@ public class OrderPersistenceEntityDisassembler {
             return null;
         }
 
-        return  Address.builder()
+        return Address.builder()
                 .city(addressEmbeddable.getCity())
                 .state(addressEmbeddable.getState())
                 .street(addressEmbeddable.getStreet())
