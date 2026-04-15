@@ -34,7 +34,12 @@ public class OrdersPersistenceProvider implements Orders {
 
     @Override
     public boolean exists(OrderId orderId) {
-        return false;
+        return persistenceRepository.existsById(orderId.value().toLong());
+    }
+
+    @Override
+    public long count() {
+        return persistenceRepository.count();
     }
 
     @Override
@@ -72,8 +77,4 @@ public class OrdersPersistenceProvider implements Orders {
         version.setAccessible(false);
     }
 
-    @Override
-    public int count() {
-        return 0;
-    }
 }
