@@ -27,9 +27,12 @@ public class Customer implements AggregateRoot<CustomerId> {
     private LoyaltyPoints loyaltyPoints;
     private Address address;
 
+    private Long version;
+
     @Builder(builderClassName = "BrandNewCustomerBuilder", builderMethodName = "brandNew")
     private static Customer createBrandNew(FullName fullName, BirthDate birthDate, Email email, Phone phone, Document document, Boolean promotionNotificationsAllowed, Address address){
         return new Customer(new CustomerId(),
+                null,
                 fullName,
                 birthDate,
                 email,
@@ -44,7 +47,7 @@ public class Customer implements AggregateRoot<CustomerId> {
     }
 
     @Builder(builderClassName = "ExistingCustomerBuilder", builderMethodName = "existing")
-    private Customer(CustomerId id, FullName fullName, BirthDate birthDate, Email email, Phone phone, Document document, Boolean promotionNotificationsAllowed, Boolean archived, OffsetDateTime registeredAt, OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints, Address address) {
+    private Customer(CustomerId id, Long version, FullName fullName, BirthDate birthDate, Email email, Phone phone, Document document, Boolean promotionNotificationsAllowed, Boolean archived, OffsetDateTime registeredAt, OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints, Address address) {
         this.setId(id);
         this.setFullName(fullName);
         this.setBirthDate(birthDate);
@@ -57,6 +60,7 @@ public class Customer implements AggregateRoot<CustomerId> {
         this.setArchivedAt(archivedAt);
         this.setLoyaltyPoints(loyaltyPoints);
         this.setAddress(address);
+        this.setVersion(version);
     }
 
     public void addLoyaltyPoints(LoyaltyPoints loyaltyPointsAdded) {
@@ -156,6 +160,10 @@ public class Customer implements AggregateRoot<CustomerId> {
         return address;
     }
 
+    public Long version() {
+        return version;
+    }
+
     private void setId(CustomerId id) {
         Objects.requireNonNull(id);
         this.id = id;
@@ -215,6 +223,10 @@ public class Customer implements AggregateRoot<CustomerId> {
         if(this.isAarchived()){
             throw new CustomerArchivedException();
         }
+    }
+
+    private void setVersion(Long version) {
+        this.version = version;
     }
 
     @Override
