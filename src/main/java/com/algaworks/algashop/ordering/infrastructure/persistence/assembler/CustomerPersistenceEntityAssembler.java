@@ -13,7 +13,7 @@ public class CustomerPersistenceEntityAssembler {
         return merge(new CustomerPersistenceEntity(), customer);
     }
 
-    private CustomerPersistenceEntity merge(CustomerPersistenceEntity customerPersistenceEntity, Customer customer) {
+    public CustomerPersistenceEntity merge(CustomerPersistenceEntity customerPersistenceEntity, Customer customer) {
         customerPersistenceEntity.setId(customer.id().value());
         customerPersistenceEntity.setBirthDate(customer.birthDate() != null ? customer.birthDate().value() : null);
         customerPersistenceEntity.setFirstName(customer.fullName().firstName());
