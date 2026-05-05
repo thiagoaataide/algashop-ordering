@@ -6,7 +6,9 @@ import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
-public class CustomerTesteDataBuilder {
+public class CustomerTestDataBuilder {
+
+    public static final CustomerId DEFAULT_CUSTOMER_ID = new CustomerId();
 
     public static Customer.BrandNewCustomerBuilder brandNewCustomer(){
         return Customer.brandNew()
@@ -29,7 +31,7 @@ public class CustomerTesteDataBuilder {
 
     public static Customer.ExistingCustomerBuilder existingCustomer(){
         return Customer.existing()
-                .id(new CustomerId())
+                .id(DEFAULT_CUSTOMER_ID)
                 .fullName(new FullName("John", "Doe"))
                 .birthDate(new BirthDate(LocalDate.of(1990, 1, 1)))
                 .email(new Email("john.doe@gmail.com"))

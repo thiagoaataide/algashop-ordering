@@ -1,7 +1,7 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.provider;
 
 import com.algaworks.algashop.ordering.domain.model.entity.Customer;
-import com.algaworks.algashop.ordering.domain.model.entity.CustomerTesteDataBuilder;
+import com.algaworks.algashop.ordering.domain.model.entity.CustomerTestDataBuilder;
 import com.algaworks.algashop.ordering.domain.model.valueobject.FullName;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.CustomerPersistenceEntityAssembler;
@@ -41,7 +41,7 @@ class CustomerPersistenceProviderIT {
 
     @Test
     void shouldPersistCustomerWithAllDataCorrectly() {
-        Customer customer = CustomerTesteDataBuilder.brandNewCustomer().build();
+        Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
 
         provider.add(customer);
         testEntityManager.flush();
@@ -74,7 +74,7 @@ class CustomerPersistenceProviderIT {
 
     @Test
     void shouldIncrementVersionWhenUpdatingExistingCustomer() {
-        Customer customer = CustomerTesteDataBuilder.brandNewCustomer().build();
+        Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
         provider.add(customer);
         Long versionAfterInsert = customer.version();
 
@@ -90,7 +90,7 @@ class CustomerPersistenceProviderIT {
 
     @Test
     void shouldThrowObjectOptimisticLockingFailureExceptionWhenUpdatingWithStaleVersion() {
-        Customer customer = CustomerTesteDataBuilder.brandNewCustomer().build();
+        Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
         provider.add(customer);
 
         customer.changeName(new FullName("Jane", "Doe"));
@@ -104,7 +104,7 @@ class CustomerPersistenceProviderIT {
 
     @Test
     void shouldReturnCustomerWithCompleteMappingWhenFoundById() {
-        CustomerPersistenceEntity entity = CustomerPersistenceEntityTestDataBuilder.existingCustomer().build();
+        CustomerPersistenceEntity entity = CustomerPersistenceEntityTestDataBuilder.aCustomer().build();
         testEntityManager.persistAndFlush(entity);
         testEntityManager.clear();
 
@@ -134,7 +134,7 @@ class CustomerPersistenceProviderIT {
 
     @Test
     void shouldReturnCorrectCountAndExistence() {
-        Customer customer = CustomerTesteDataBuilder.brandNewCustomer().build();
+        Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
 
         assertThat(provider.count()).isZero();
         assertThat(provider.exists(customer.id())).isFalse();
