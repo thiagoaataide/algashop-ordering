@@ -140,7 +140,7 @@ public class Customer implements AggregateRoot<CustomerId> {
         return promotionNotificationsAllowed;
     }
 
-    public Boolean isAarchived() {
+    public Boolean isArchived() {
         return archived;
     }
 
@@ -220,7 +220,7 @@ public class Customer implements AggregateRoot<CustomerId> {
     }
 
     private void verifyChangeable() {
-        if(this.isAarchived()){
+        if(this.isArchived()){
             throw new CustomerArchivedException();
         }
     }

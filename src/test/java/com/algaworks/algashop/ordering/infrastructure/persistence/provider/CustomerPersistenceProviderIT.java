@@ -58,7 +58,7 @@ class CustomerPersistenceProviderIT {
         assertThat(saved.phone().value()).isEqualTo("1234567890");
         assertThat(saved.document().value()).isEqualTo("1234567890123456");
         assertThat(saved.isPromotionNotificationsAllowed()).isTrue();
-        assertThat(saved.isAarchived()).isFalse();
+        assertThat(saved.isArchived()).isFalse();
         assertThat(saved.archivedAt()).isNull();
         assertThat(saved.registeredAt()).isNotNull();
         assertThat(saved.loyaltyPoints().value()).isZero();
@@ -119,7 +119,7 @@ class CustomerPersistenceProviderIT {
         assertThat(customer.phone().value()).isEqualTo(entity.getPhone());
         assertThat(customer.document().value()).isEqualTo(entity.getDocument());
         assertThat(customer.isPromotionNotificationsAllowed()).isEqualTo(entity.getPromotionNotificationsAllowed());
-        assertThat(customer.isAarchived()).isEqualTo(entity.getArchived());
+        assertThat(customer.isArchived()).isEqualTo(entity.getArchived());
         assertThat(customer.loyaltyPoints().value()).isEqualTo(entity.getLoyaltyPoints());
         assertThat(customer.birthDate().value()).isEqualTo(entity.getBirthDate());
         assertThat(customer.address().street()).isEqualTo(entity.getAddress().getStreet());

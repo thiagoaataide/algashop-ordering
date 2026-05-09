@@ -21,7 +21,7 @@ public class CustomerPersistenceEntityAssembler {
         customerPersistenceEntity.setEmail(customer.email().value());
         customerPersistenceEntity.setPhone(customer.phone().value());
         customerPersistenceEntity.setDocument(customer.document().value());
-        customerPersistenceEntity.setArchived(customer.isAarchived());
+        customerPersistenceEntity.setArchived(customer.isArchived());
         customerPersistenceEntity.setArchivedAt(customer.archivedAt());
         customerPersistenceEntity.setLoyaltyPoints(customer.loyaltyPoints().value());
         customerPersistenceEntity.setRegisteredAt(customer.registeredAt());
