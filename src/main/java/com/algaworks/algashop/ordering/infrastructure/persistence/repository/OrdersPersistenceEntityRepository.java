@@ -3,6 +3,14 @@ package com.algaworks.algashop.ordering.infrastructure.persistence.repository;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OrdersPersistenceEntityRepository extends JpaRepository<OrderPersistenceEntity, Long> {
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.UUID;
 
+public interface OrdersPersistenceEntityRepository extends JpaRepository<OrderPersistenceEntity, Long> {
+    List<OrderPersistenceEntity> findByCustomer_IdAndPlaceAtBetween(
+            UUID customerId,
+            OffsetDateTime start,
+            OffsetDateTime end
+    );
 }

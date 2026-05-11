@@ -2,6 +2,7 @@ package com.algaworks.algashop.ordering.infrastructure.persistence.provider;
 
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
 import com.algaworks.algashop.ordering.domain.model.repository.Orders;
+import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderId;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
@@ -15,7 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.time.OffsetDateTime;
+import java.time.Year;
+import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -59,6 +65,19 @@ public class OrdersPersistenceProvider implements Orders {
 
     }
 
+    @Override
+    public List<Order> placedByCustomerInYear(CustomerId customerId, Year year) {
+        OffsetDateTime start = OffsetDateTime.of(year.getValue(), 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
+        OffsetDateTime end = OffsetDateTime.of(year.getValue(), 12, 31, 23, 59, 59, 999999999, ZoneOffset.UTC);
+        return persistenceRepository.findByCustomer_IdAndPlaceAtBetween(
+                        customerId.value(),
+                        start,
+                        end)
+                .stream()
+                .map(disassembler::toDomainEntity)
+                .collect(Collectors.toList());
+    }
+
     private void update(Order aggregateRoot, OrderPersistenceEntity persistenceEntity) {
         persistenceEntity = assembler.merge(persistenceEntity, aggregateRoot);
         entityManager.detach(persistenceEntity);
@@ -79,5 +98,4 @@ public class OrdersPersistenceProvider implements Orders {
         ReflectionUtils.setField(version, aggregateRoot, persistenceEntity.getVersion());
         version.setAccessible(false);
     }
-
 }
