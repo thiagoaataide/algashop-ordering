@@ -56,6 +56,11 @@ public class CustomerPersistenceProvider implements Customers {
         return persistenceRepository.count();
     }
 
+    @Override
+    public boolean isEmailUnique(Email email, CustomerId exceptCustomerId) {
+        return !persistenceRepository.existsByEmailAndIdNot(email.value(),exceptCustomerId.value());
+    }
+
     private void insert(Customer aggregateRoot) {
         CustomerPersistenceEntity persistenceEntity = assembler.fromDomain(aggregateRoot);
         persistenceRepository.saveAndFlush(persistenceEntity);
