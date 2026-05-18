@@ -1,27 +1,24 @@
 package com.algaworks.algashop.ordering.domain.model.valueobject.id;
 
 import com.algaworks.algashop.ordering.domain.model.utility.IdGenerator;
-import io.hypersistence.tsid.TSID;
 
 import java.util.Objects;
+import java.util.UUID;
 
-public record ShoppingCartId(TSID value) {
+public record ShoppingCartId(UUID value) {
 
     public ShoppingCartId {
         Objects.requireNonNull(value);
     }
 
     public ShoppingCartId() {
-        this(IdGenerator.generateTSID());
+        this(IdGenerator.genarateTimeBasedUUID());
     }
 
     public ShoppingCartId(String value) {
-        this(TSID.from(value));
+        this(UUID.fromString(value));
     }
 
-    public ShoppingCartId(Long value) {
-        this(TSID.from(value));
-    }
 
     @Override
     public String toString() {
