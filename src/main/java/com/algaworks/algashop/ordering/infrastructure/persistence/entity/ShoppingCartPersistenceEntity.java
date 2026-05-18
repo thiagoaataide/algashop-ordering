@@ -55,7 +55,7 @@ public class ShoppingCartPersistenceEntity {
     private Long version;
 
     @Builder
-    public ShoppingCartPersistenceEntity(Long id, CustomerPersistenceEntity customer,
+    public ShoppingCartPersistenceEntity(UUID id, CustomerPersistenceEntity customer,
                                          BigDecimal totalAmount, Integer totalItems,
                                          OffsetDateTime createdAt, Set<ShoppingCartItemPersistenceEntity> items) {
         this.id = id;
