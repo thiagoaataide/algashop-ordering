@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class ShoppingCartPersistenceEntityAssebler {
+public class ShoppingCartPersistenceEntityAssembler {
 
     private final CustomerPersistenceEntityRepository customerPersistenceEntityRepository;
 
