@@ -17,7 +17,7 @@ public class ShoppingCartPersistenceEntityAssembler {
 
     private final CustomerPersistenceEntityRepository customerPersistenceEntityRepository;
 
-    public ShoppingCartPersistenceEntity fromDomain(ShoppingCart shoppingCart){
+    public ShoppingCartPersistenceEntity fromDomain(ShoppingCart shoppingCart) {
         return merge(new ShoppingCartPersistenceEntity(), shoppingCart);
     }
 
@@ -61,4 +61,5 @@ public class ShoppingCartPersistenceEntityAssembler {
                 .totalAmount(source.totalAmount().value())
                 .build();
 
+    }
 }
