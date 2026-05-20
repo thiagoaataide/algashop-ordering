@@ -6,12 +6,13 @@ import com.algaworks.algashop.ordering.domain.model.valueobject.ProductName;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.ProductId;
 
 public class ProductTestDataBuilder {
+    public static final ProductId DEFAULT_PRODUCT_ID = new ProductId();
 
     private ProductTestDataBuilder(){}
 
     public static Product.ProductBuilder aProduct(){
         return Product.builder()
-                .id(new ProductId())
+                .id(DEFAULT_PRODUCT_ID)
                 .inStock(true)
                 .name(new ProductName("Samsung Galaxy S25 Ultra"))
                 .price(new Money("2500"));
@@ -34,7 +35,7 @@ public class ProductTestDataBuilder {
 
     }
 
-    public static Product.ProductBuilder aProductMousePad(){
+    public static Product.ProductBuilder aProductAltMousePad(){
         return Product.builder()
                 .id(new ProductId())
                 .inStock(true)

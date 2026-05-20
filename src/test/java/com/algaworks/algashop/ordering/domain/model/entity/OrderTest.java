@@ -74,7 +74,7 @@ class OrderTest {
     public void shouldCalculateTotals() {
         Order order = Order.draft(new CustomerId());
 
-        order.addItem(ProductTestDataBuilder.aProductMousePad().build(), new Quantity(1));
+        order.addItem(ProductTestDataBuilder.aProductAltMousePad().build(), new Quantity(1));
 
         order.addItem(ProductTestDataBuilder.aProductAltRamMemory().build(), new Quantity(2));
 
@@ -177,7 +177,7 @@ class OrderTest {
         Shipping shipping = OrderTestDataBuilder.aShippingAlt();
         Billing billing = OrderTestDataBuilder.aBilling();
         PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD;
-        Product product = ProductTestDataBuilder.aProductMousePad().build();
+        Product product = ProductTestDataBuilder.aProductAltMousePad().build();
         Quantity productQuantity = new Quantity(1);
 
 

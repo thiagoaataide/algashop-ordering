@@ -33,7 +33,7 @@ public class OrderTestDataBuilder {
         if(withItems){
             order.addItem(ProductTestDataBuilder.aProduct().build(), new Quantity(1));
             order.addItem(ProductTestDataBuilder.aProductAltRamMemory().build(), new Quantity(1));
-            order.addItem(ProductTestDataBuilder.aProductMousePad().build(), new Quantity(2));
+            order.addItem(ProductTestDataBuilder.aProductAltMousePad().build(), new Quantity(2));
         }
 
         switch (this.status){

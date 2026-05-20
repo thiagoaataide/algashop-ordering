@@ -92,7 +92,7 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
         Objects.requireNonNull(quantity);
         ShoppingCartItem shoppingCartItem = this.findItem(shoppingCartItemId);
         shoppingCartItem.changeQuantity(quantity);
-
+        this.recalculateTotals();
     }
 
     public void removeItem(ShoppingCartItemId shoppingCartItemId) {

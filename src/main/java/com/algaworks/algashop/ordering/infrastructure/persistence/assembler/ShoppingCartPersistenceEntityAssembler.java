@@ -18,10 +18,10 @@ public class ShoppingCartPersistenceEntityAssembler {
     private final CustomerPersistenceEntityRepository customerPersistenceEntityRepository;
 
     public ShoppingCartPersistenceEntity fromDomain(ShoppingCart shoppingCart) {
-        return merge(new ShoppingCartPersistenceEntity(), shoppingCart);
+        return merge(shoppingCart, new ShoppingCartPersistenceEntity());
     }
 
-    private ShoppingCartPersistenceEntity merge(ShoppingCartPersistenceEntity shoppingCartPersistenceEntity, ShoppingCart shoppingCart) {
+    public ShoppingCartPersistenceEntity merge(ShoppingCart shoppingCart, ShoppingCartPersistenceEntity shoppingCartPersistenceEntity) {
         shoppingCartPersistenceEntity.setId(shoppingCart.id().value());
         shoppingCartPersistenceEntity.setCreatedAt(shoppingCart.createdAt());
         shoppingCartPersistenceEntity.setTotalItems(shoppingCart.totalItems().value());
