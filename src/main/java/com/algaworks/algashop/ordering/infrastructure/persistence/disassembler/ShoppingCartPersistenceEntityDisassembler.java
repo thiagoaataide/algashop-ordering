@@ -40,6 +40,7 @@ public class ShoppingCartPersistenceEntityDisassembler {
     private ShoppingCartItem toDomainEntity(ShoppingCartItemPersistenceEntity persistenceEntity) {
         return ShoppingCartItem.existing()
                 .id(new ShoppingCartItemId(persistenceEntity.getId()))
+                .shoppingCartId(new ShoppingCartId(persistenceEntity.getShoppingCartId()))
                 .price(new Money(persistenceEntity.getPrice()))
                 .quantity(new Quantity(persistenceEntity.getQuantity()))
                 .totalAmount(new Money(persistenceEntity.getTotalAmount()))

@@ -28,7 +28,7 @@ public class ShoppingCartItem {
         this.setId(id);
         this.setShoppingCartId(shoppingCartId);
         this.setProductId(productId);
-        this.setProductName(name);
+        this.setProductName(productName);
         this.setPrice(price);
         this.setQuantity(quantity);
         this.setTotalAmount(totalAmount);
@@ -73,34 +73,42 @@ public class ShoppingCartItem {
 
 
     private void setId(ShoppingCartItemId id) {
+        Objects.requireNonNull(id);
         this.id = id;
     }
 
     private void setShoppingCartId(ShoppingCartId shoppingCartId) {
+        Objects.requireNonNull(shoppingCartId);
         this.shoppingCartId = shoppingCartId;
     }
 
     private void setProductId(ProductId productId) {
+        Objects.requireNonNull(productId);
         this.productId = productId;
     }
 
     private void setProductName(ProductName name) {
+        Objects.requireNonNull(name);
         this.name = name;
     }
 
     private void setPrice(Money price) {
+        Objects.requireNonNull(price);
         this.price = price;
     }
 
     private void setQuantity(Quantity quantity) {
+        Objects.requireNonNull(quantity);
         this.quantity = quantity;
     }
 
     private void setTotalAmount(Money totalAmount) {
+        Objects.requireNonNull(totalAmount);
         this.totalAmount = totalAmount;
     }
 
     private void setAvailable(Boolean available) {
+        Objects.requireNonNull(available);
         this.available = available;
     }
 
