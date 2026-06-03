@@ -1,4 +1,4 @@
-package com.algaworks.algashop.ordering.infrastructure.persistence.fake;
+package com.algaworks.algashop.ordering.infrastructure.fake;
 
 import com.algaworks.algashop.ordering.domain.model.service.ProductCatalogService;
 import com.algaworks.algashop.ordering.domain.model.valueobject.Money;
