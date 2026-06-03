@@ -12,11 +12,13 @@ import com.algaworks.algashop.ordering.infrastructure.persistence.config.SpringD
 import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.CustomerPersistenceEntityDisassembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.ShoppingCartPersistenceEntityDisassembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.repository.ShoppingCartPersistenceEntityRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,7 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
         CustomerPersistenceEntityDisassembler.class,
         SpringDataAuditingConfig.class
 })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class ShoppingCartUpdateProviderIT {
 
     private ShoppingCartPersistenceProvider persistenceProvider;
@@ -63,6 +66,7 @@ class ShoppingCartUpdateProviderIT {
 
 
     @Test
+    @Transactional(propagation = Propagation.NEVER)
     public void shouldUpdateItemPriceAndTotalAmount(){
         ShoppingCart shoppingCart = ShoppingCartTestDataBuilder.aShoppingCart().withItems(false).build();
 
@@ -80,6 +84,46 @@ class ShoppingCartUpdateProviderIT {
         Money expectedNewCartTotalAmount = expectedNewItemTotalPrice.add(new Money("200"));
 
         shoppingCartUpdateProvider.adjustPrice(productIdUpdate, newProduct1Price);
+
+        ShoppingCart updatedShoppingCart = persistenceProvider.ofId(shoppingCart.id()).orElseThrow();
+
+        Assertions.assertThat(updatedShoppingCart.totalAmount()).isEqualTo(expectedNewCartTotalAmount);
+        Assertions.assertThat(updatedShoppingCart.totalItems().value()).isEqualTo(3);
+
+        ShoppingCartItem item = updatedShoppingCart.findItem(productIdUpdate);
+
+        Assertions.assertThat(item.totalAmount()).isEqualTo(expectedNewItemTotalPrice);
+        Assertions.assertThat(item.price()).isEqualTo(newProduct1Price);
+
+    }
+
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    public void shouldUpdateItemAvailability(){
+        ShoppingCart shoppingCart = ShoppingCartTestDataBuilder.aShoppingCart().withItems(false).build();
+
+        Product product1 = ProductTestDataBuilder.aProduct().price(new Money("2000")).inStock(true).build();
+        Product product2 = ProductTestDataBuilder.aProductAltRamMemory().price(new Money("200")).inStock(true).build();
+
+        shoppingCart.addItem(product1, new Quantity(2));
+        shoppingCart.addItem(product2, new Quantity(1));
+
+        persistenceProvider.add(shoppingCart);
+
+        ProductId productIdUpdate = product1.id();
+        ProductId productIdToNotUpdate = product2.id();
+
+        shoppingCartUpdateProvider.changeAvailability(product1.id(), false);
+
+        ShoppingCart updatedShoppingCart = persistenceProvider.ofId(shoppingCart.id()).orElseThrow();
+
+        ShoppingCartItem item = updatedShoppingCart.findItem(productIdUpdate);
+
+        Assertions.assertThat(item.available()).isFalse();
+
+        ShoppingCartItem item2 = updatedShoppingCart.findItem(productIdToNotUpdate);
+        Assertions.assertThat(item2.available()).isTrue();
     }
 
 }
