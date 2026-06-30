@@ -99,15 +99,31 @@ public class CustomerManagementApplicationService {
         AddressData address = input.getAddress();
         customer.changeAdress(
                 Address.builder()
-                .street(address.getStreet())
-                .city(address.getCity())
-                .neighborhood(address.getNeighborhood())
-                .number(address.getNumber())
-                .complement(address.getComplement())
-                .state(address.getState())
-                .zipCode(new ZipCode(address.getZipCode()))
-                .build());
+                        .street(address.getStreet())
+                        .city(address.getCity())
+                        .neighborhood(address.getNeighborhood())
+                        .number(address.getNumber())
+                        .complement(address.getComplement())
+                        .state(address.getState())
+                        .zipCode(new ZipCode(address.getZipCode()))
+                        .build());
 
+        customers.add(customer);
+    }
+
+    @Transactional
+    public void archive(UUID rawCustomerId) {
+        Objects.requireNonNull(rawCustomerId);
+        Customer customer = customers.ofId(new CustomerId(rawCustomerId)).orElseThrow(() -> new CustomerNotFoundException());
+        customer.archive();
+        customers.add(customer);
+    }
+
+    @Transactional
+    public void changeEmail(UUID rawCustomerId, String emailUpdate) {
+        Objects.requireNonNull(rawCustomerId);
+        Customer customer = customers.ofId(new CustomerId(rawCustomerId)).orElseThrow(() -> new CustomerNotFoundException());
+        customerRegistration.changeEmail(customer, new Email(emailUpdate));
         customers.add(customer);
     }
 
