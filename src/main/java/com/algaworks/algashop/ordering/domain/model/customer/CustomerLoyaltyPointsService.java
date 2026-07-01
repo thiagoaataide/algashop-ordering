@@ -29,7 +29,7 @@ public class CustomerLoyaltyPointsService {
     }
 
     private LoyaltyPoints calculatePoints(Order order) {
-        if (shouldGivePointsByAmount(order.totalAmount())){
+        if (shouldGivePointsByAmount(order.totalAmount())) {
             Money result = order.totalAmount().divide(expectedAmountToGivePoints);
             return new LoyaltyPoints(result.value().intValue() * basePoints.value());
         }
