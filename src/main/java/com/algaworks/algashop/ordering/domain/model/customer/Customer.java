@@ -2,6 +2,7 @@ package com.algaworks.algashop.ordering.domain.model.customer;
 
 
 
+import com.algaworks.algashop.ordering.domain.model.AbstractEventSourceEntity;
 import com.algaworks.algashop.ordering.domain.model.AggregateRoot;
 import com.algaworks.algashop.ordering.domain.model.commons.*;
 import lombok.Builder;
@@ -12,7 +13,9 @@ import java.util.UUID;
 
 import static com.algaworks.algashop.ordering.domain.model.ErrorMessages.*;
 
-public class Customer implements AggregateRoot<CustomerId> {
+public class Customer
+        extends AbstractEventSourceEntity
+        implements AggregateRoot<CustomerId> {
     private CustomerId id;
     private FullName fullName;
     private BirthDate birthDate;
@@ -30,7 +33,7 @@ public class Customer implements AggregateRoot<CustomerId> {
 
     @Builder(builderClassName = "BrandNewCustomerBuilder", builderMethodName = "brandNew")
     private static Customer createBrandNew(FullName fullName, BirthDate birthDate, Email email, Phone phone, Document document, Boolean promotionNotificationsAllowed, Address address){
-        return new Customer(new CustomerId(),
+        Customer customer = new Customer(new CustomerId(),
                 null,
                 fullName,
                 birthDate,
@@ -43,6 +46,10 @@ public class Customer implements AggregateRoot<CustomerId> {
                 null,
                 LoyaltyPoints.ZERO,
                 address);
+
+        customer.publishDomainEvent(new CustomerRegisteredEvent(customer.id(), customer.registeredAt));
+
+        return customer;
     }
 
     @Builder(builderClassName = "ExistingCustomerBuilder", builderMethodName = "existing")
@@ -82,6 +89,8 @@ public class Customer implements AggregateRoot<CustomerId> {
         this.setBirthDate(null);
         this.setPromotionNotificationsAllowed(false);
         this.setAddress(this.address().toBuilder().complement(null).number("Anonymized").build());
+
+        this.publishDomainEvent(new CustomerArchivedEvent(this.id(), this.archivedAt()));
     }
 
     public void enablePromotionNotifications() {
