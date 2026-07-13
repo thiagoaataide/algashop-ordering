@@ -70,7 +70,7 @@ class CustomerManagementApplicationServiceIT {
 
         Mockito.verify(customerEventListener, Mockito.never()).listen(Mockito.any(CustomerArchivedEvent.class));
 
-        Mockito.verify(customerNotificationApplicationService).notifyNewRegistration(Mockito.any(UUID.class));
+        Mockito.verify(customerNotificationApplicationService).notifyNewRegistration(Mockito.any(CustomerNotificationApplicationService.NotifyNewRegistrationInput.class));
     }
 
 
