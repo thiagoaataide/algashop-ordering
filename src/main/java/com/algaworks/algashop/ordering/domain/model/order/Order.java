@@ -103,22 +103,26 @@ public class Order
         this.verifyIfCanChangeToPlaced();
         this.setPlacedAt(OffsetDateTime.now());
         this.changeStatus(OrderStatus.PLACED);
+        this.publishDomainEvent(new OrderPlacedEvent(this.id, this.customerId, OffsetDateTime.now()));
     }
 
 
     public void markAsPaid() {
         this.changeStatus(OrderStatus.PAID);
         this.setPaidAt(OffsetDateTime.now());
+        this.publishDomainEvent(new OrderPaidEvent(this.id, this.customerId, OffsetDateTime.now()));
     }
 
     public void markAsReady() {
         this.changeStatus(OrderStatus.READY);
         this.setReadyAt(OffsetDateTime.now());
+        this.publishDomainEvent(new OrderReadyEvent(this.id, this.customerId, OffsetDateTime.now()));
     }
 
     public void cancel() {
         this.changeStatus(OrderStatus.CANCELED);
         this.setCanceledAt(OffsetDateTime.now());
+        this.publishDomainEvent(new OrderCanceledEvent(this.id, this.customerId, OffsetDateTime.now()));
     }
 
     public void changePaymentMethod(PaymentMethod paymentMethod) {

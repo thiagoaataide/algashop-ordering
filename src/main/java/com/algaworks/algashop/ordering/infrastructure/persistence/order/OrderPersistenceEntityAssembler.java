@@ -45,6 +45,9 @@ public class OrderPersistenceEntityAssembler {
         orderPersistenceEntity.setCustomer(customerPersistenceEntity);
 
         orderPersistenceEntity.replaceItems(mergedItems);
+
+        orderPersistenceEntity.addEvents(order.domainEvents());
+
         return orderPersistenceEntity;
     }
 
