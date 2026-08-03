@@ -10,6 +10,7 @@ import com.algaworks.algashop.ordering.domain.model.product.ProductTestDataBuild
 import com.algaworks.algashop.ordering.domain.model.product.Product;
 import com.algaworks.algashop.ordering.domain.model.product.ProductOutOfStockException;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerId;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,11 +26,20 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOf
 @ExtendWith(MockitoExtension.class)
 class BuyNowServiceTest {
 
-    @InjectMocks
     private BuyNowService buyNowService;
 
     @Mock
     private Orders orders;
+
+    @BeforeEach
+    void setup(){
+        var specification = new CustomerHaveFreeShippingSpecification(orders,
+                new LoyaltyPoints(200),
+                2L,
+                new LoyaltyPoints(2000));
+
+        buyNowService = new BuyNowService(specification);
+    }
 
     @Test
     void givenValidProductAndDetails_whenBuyNow_shouldReturnPlacedOrder() {

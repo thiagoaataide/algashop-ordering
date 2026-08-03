@@ -1,6 +1,9 @@
 package com.algaworks.algashop.ordering.aplication.checkout;
 
 import com.algaworks.algashop.ordering.domain.model.commons.ZipCode;
+import com.algaworks.algashop.ordering.domain.model.customer.Customer;
+import com.algaworks.algashop.ordering.domain.model.customer.CustomerNotFoundException;
+import com.algaworks.algashop.ordering.domain.model.customer.Customers;
 import com.algaworks.algashop.ordering.domain.model.order.*;
 import com.algaworks.algashop.ordering.domain.model.order.shipping.OriginAddressService;
 import com.algaworks.algashop.ordering.domain.model.order.shipping.ShippingCostService;
@@ -25,13 +28,18 @@ public class CheckoutApplicationService {
     private final BillingInputDisassembler billingInputDisassembler;
     private final ShippingInputDisassembler shippingInputDisassembler;
     private final Orders orders;
+    private final Customers customers;
 
     @Transactional
     public String checkout(CheckoutInput input){
         Objects.requireNonNull(input);
+
+
         PaymentMethod paymentMethod = PaymentMethod.valueOf(input.getPaymentMethod());
 
         ShoppingCart shoppingCart = shoppingCarts.ofId(new ShoppingCartId(input.getShoppingCartId())).orElseThrow(() -> new ShoppingCartNotFoundException());
+
+        Customer customer = customers.ofId(shoppingCart.customerId()).orElseThrow(() -> new CustomerNotFoundException());
 
         Billing billing = billingInputDisassembler.toDomainModel(input.getBilling());
 
@@ -41,7 +49,7 @@ public class CheckoutApplicationService {
         ));
         Shipping shipping = shippingInputDisassembler.toDomainModel(input.getShipping(), calculationResult);
 
-        Order order = checkoutService.checkout(shoppingCart, billing, shipping, paymentMethod);
+        Order order = checkoutService.checkout(customer, shoppingCart, billing, shipping, paymentMethod);
         orders.add(order);
 
         shoppingCarts.add(shoppingCart);
