@@ -39,7 +39,7 @@ public class OrderPersistenceEntity
     private Integer totalItems;
     private String status;
     private String paymentMethod;
-    private OffsetDateTime placeAt;
+    private OffsetDateTime placedAt;
     private OffsetDateTime paidAt;
     private OffsetDateTime canceledAt;
     private OffsetDateTime readyAt;
@@ -95,14 +95,14 @@ public class OrderPersistenceEntity
     private Set<OrderItemPersistenceEntity> items = new HashSet<>();
 
     @Builder
-    public OrderPersistenceEntity(Long id, CustomerPersistenceEntity customer, BigDecimal totalAmount, Integer totalItems, String status, String paymentMethod, OffsetDateTime placeAt, OffsetDateTime paidAt, OffsetDateTime canceledAt, OffsetDateTime readyAt, UUID createdByUserId, OffsetDateTime lastModifiedAt, UUID lastModifiedByUserId, Long version, BillingEmbeddable billing, ShippingEmbeddable shipping, Set<OrderItemPersistenceEntity> items) {
+    public OrderPersistenceEntity(Long id, CustomerPersistenceEntity customer, BigDecimal totalAmount, Integer totalItems, String status, String paymentMethod, OffsetDateTime placedAt, OffsetDateTime paidAt, OffsetDateTime canceledAt, OffsetDateTime readyAt, UUID createdByUserId, OffsetDateTime lastModifiedAt, UUID lastModifiedByUserId, Long version, BillingEmbeddable billing, ShippingEmbeddable shipping, Set<OrderItemPersistenceEntity> items) {
         this.id = id;
         this.customer = customer;
         this.totalAmount = totalAmount;
         this.totalItems = totalItems;
         this.status = status;
         this.paymentMethod = paymentMethod;
-        this.placeAt = placeAt;
+        this.placedAt = placedAt;
         this.paidAt = paidAt;
         this.canceledAt = canceledAt;
         this.readyAt = readyAt;

@@ -23,7 +23,7 @@ public class OrderPersistenceEntityDisassembler {
                 .totalAmount(new Money(persistenceEntity.getTotalAmount()))
                 .totalItems(new Quantity(persistenceEntity.getTotalItems()))
                 .paymentMethod(PaymentMethod.valueOf(persistenceEntity.getPaymentMethod()))
-                .placedAt(persistenceEntity.getPlaceAt())
+                .placedAt(persistenceEntity.getPlacedAt())
                 .canceledAt(persistenceEntity.getCanceledAt())
                 .paidAt(persistenceEntity.getPaidAt())
                 .readyAt(persistenceEntity.getReadyAt())

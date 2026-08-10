@@ -16,7 +16,7 @@ public interface OrdersPersistenceEntityRepository extends JpaRepository<OrderPe
             SELECT o
             FROM OrderPersistenceEntity o
             WHERE o.customer.id = :customerId
-            AND YEAR(o.placeAt) = :year
+            AND YEAR(o.placedAt) = :year
             """)
     List<OrderPersistenceEntity> placedByCustomerInYear(
             @Param("customerId") UUID customerId,
@@ -27,7 +27,7 @@ public interface OrdersPersistenceEntityRepository extends JpaRepository<OrderPe
             SELECT COUNT(o)
             FROM OrderPersistenceEntity o
             WHERE o.customer.id = :customerId
-            AND YEAR(o.placeAt) = :year
+            AND YEAR(o.placedAt) = :year
             AND o.canceledAt IS NULL
             AND o.paidAt IS NOT NULL
             """)
