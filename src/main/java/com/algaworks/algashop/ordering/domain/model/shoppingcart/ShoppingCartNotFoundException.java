@@ -1,6 +1,6 @@
 package com.algaworks.algashop.ordering.domain.model.shoppingcart;
 
-import com.algaworks.algashop.ordering.domain.model.DomainExcpetion;
+import com.algaworks.algashop.ordering.domain.model.DomainEntityNotFoundExcpetion;
 
-public class ShoppingCartNotFoundException extends DomainExcpetion {
+public class ShoppingCartNotFoundException extends DomainEntityNotFoundExcpetion {
 }

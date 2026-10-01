@@ -4,6 +4,9 @@ import com.algaworks.algashop.ordering.application.commons.AddressData;
 import com.algaworks.algashop.ordering.application.customer.management.CustomerInput;
 import com.algaworks.algashop.ordering.application.customer.management.CustomerManagementApplicationService;
 import com.algaworks.algashop.ordering.application.customer.query.*;
+import com.algaworks.algashop.ordering.domain.model.DomainExcpetion;
+import com.algaworks.algashop.ordering.domain.model.customer.CustomerEmailIsInUseException;
+import com.algaworks.algashop.ordering.domain.model.customer.CustomerNotFoundException;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,6 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @WebMvcTest(controllers = CustomerController.class)
@@ -118,7 +122,7 @@ class CustomerControllerContractTest {
     }
 
     @Test
-    public void createCustomerErrorContract() {
+    public void createCustomerError400Contract() {
         String jsonInput = """
                 {
                   "firstName": "",
@@ -227,8 +231,8 @@ class CustomerControllerContractTest {
         Mockito.when(customerQueryService.findById(customer.getId())).thenReturn(customer);
 
         RestAssuredMockMvc
-                .given()
-                    .accept(MediaType.APPLICATION_JSON)
+                            .given()
+                            .accept(MediaType.APPLICATION_JSON)
                 .when()
                     .get("/api/v1/customers/{customerId}", customer.getId())
                 .then()
@@ -259,5 +263,171 @@ class CustomerControllerContractTest {
     }
 
 
+    @Test
+    public void findByIdError404Contract() {
+        UUID invalidCustomerId = UUID.randomUUID();
 
+        Mockito.when(customerQueryService.findById(invalidCustomerId))
+                .thenThrow(new CustomerNotFoundException());
+
+        RestAssuredMockMvc
+                .given()
+                    .accept(MediaType.APPLICATION_JSON)
+                .when()
+                    .get("/api/v1/customers/{customerId}", invalidCustomerId)
+                .then()
+                .assertThat()
+                    .contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+                    .statusCode(HttpStatus.NOT_FOUND.value())
+                .body(
+                        "status", Matchers.is(HttpStatus.NOT_FOUND.value()),
+                        "type", Matchers.is("/errors/not-found"),
+                        "title", Matchers.notNullValue(),
+                        "instance", Matchers.notNullValue()
+                );
+
+
+    }
+
+    @Test
+    public void createCustomerError409Contract() {
+
+        Mockito.when(customerManagementApplicationService.create(Mockito.any(CustomerInput.class)))
+                .thenThrow(CustomerEmailIsInUseException.class);
+
+
+        String jsonInput = """
+                {
+                  "firstName": "John",
+                  "lastName": "Doe",
+                  "email": "john.doe@gmail.com",
+                  "document": "12345",
+                  "phone": "31991953046",
+                  "birthDate": "1989-07-25",
+                  "promotionNotificationsAllowed": false,
+                  "address": {
+                    "street": "Bourbon Street",
+                    "number": "2000",
+                    "complement": "apt 122",
+                    "neighborhood": "North Ville",
+                    "city": "Yostfort",
+                    "state": "South Carolina",
+                    "zipCode": "12321"
+                  }
+                }
+                """;
+
+        RestAssuredMockMvc
+                .given()
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .body(jsonInput)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .post("/api/v1/customers")
+                .then()
+                .assertThat()
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+                .statusCode(HttpStatus.CONFLICT.value())
+                .body(
+                        "status", Matchers.is(HttpStatus.CONFLICT.value()),
+                        "type", Matchers.is("/errors/conflict"),
+                        "title", Matchers.notNullValue(),
+                        "instance", Matchers.notNullValue()
+                );
+
+
+    }
+
+    @Test
+    public void createCustomerError422Contract() {
+        Mockito.when(customerManagementApplicationService.create(Mockito.any(CustomerInput.class)))
+                .thenThrow(DomainExcpetion.class);
+
+
+        String jsonInput = """
+                {
+                  "firstName": "John",
+                  "lastName": "Doe",
+                  "email": "john.doe@gmail.com",
+                  "document": "12345",
+                  "phone": "31991953046",
+                  "birthDate": "1989-07-25",
+                  "promotionNotificationsAllowed": false,
+                  "address": {
+                    "street": "Bourbon Street",
+                    "number": "2000",
+                    "complement": "apt 122",
+                    "neighborhood": "North Ville",
+                    "city": "Yostfort",
+                    "state": "South Carolina",
+                    "zipCode": "12321"
+                  }
+                }
+                """;
+
+        RestAssuredMockMvc
+                .given()
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .body(jsonInput)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .post("/api/v1/customers")
+                .then()
+                .assertThat()
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+                .statusCode(HttpStatus.UNPROCESSABLE_ENTITY.value())
+                .body(
+                        "status", Matchers.is(HttpStatus.UNPROCESSABLE_ENTITY.value()),
+                        "type", Matchers.is("/errors/unprocessable-entity"),
+                        "title", Matchers.notNullValue(),
+                        "instance", Matchers.notNullValue()
+                );
+    }
+
+    @Test
+    public void createCustomerError500Contract() {
+        Mockito.when(customerManagementApplicationService.create(Mockito.any(CustomerInput.class)))
+                .thenThrow(RuntimeException.class);
+
+
+        String jsonInput = """
+                {
+                  "firstName": "John",
+                  "lastName": "Doe",
+                  "email": "john.doe@gmail.com",
+                  "document": "12345",
+                  "phone": "31991953046",
+                  "birthDate": "1989-07-25",
+                  "promotionNotificationsAllowed": false,
+                  "address": {
+                    "street": "Bourbon Street",
+                    "number": "2000",
+                    "complement": "apt 122",
+                    "neighborhood": "North Ville",
+                    "city": "Yostfort",
+                    "state": "South Carolina",
+                    "zipCode": "12321"
+                  }
+                }
+                """;
+
+        RestAssuredMockMvc
+                .given()
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .body(jsonInput)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .post("/api/v1/customers")
+                .then()
+                .assertThat()
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .body(
+                        "status", Matchers.is(HttpStatus.INTERNAL_SERVER_ERROR.value()),
+                        "type", Matchers.is("/errors/internal"),
+                        "title", Matchers.notNullValue(),
+                        "instance", Matchers.notNullValue()
+                );
+
+    }
 }
