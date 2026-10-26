@@ -1,7 +1,14 @@
 package com.algaworks.algashop.ordering.presentation;
 
+import com.algaworks.algashop.ordering.application.checkout.BuyNowApplicationService;
+import com.algaworks.algashop.ordering.application.checkout.BuyNowInput;
+import com.algaworks.algashop.ordering.application.checkout.CheckoutApplicationService;
+import com.algaworks.algashop.ordering.application.checkout.CheckoutInput;
 import com.algaworks.algashop.ordering.application.order.query.OrderDetailOutput;
+import com.algaworks.algashop.ordering.application.order.query.OrderFilter;
 import com.algaworks.algashop.ordering.application.order.query.OrderQueryService;
+import com.algaworks.algashop.ordering.application.order.query.OrderSummaryOutput;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +19,14 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
     private final OrderQueryService orderQueryService;
+    private final BuyNowApplicationService buyNowApplicationService;
+    private final CheckoutApplicationService checkoutApplicationService;
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public PageModel<OrderSummaryOutput> findAll(OrderFilter orderFilter) {
+        return PageModel.of(orderQueryService.filter(orderFilter));
+    }
 
     @GetMapping("/{orderId}")
     @ResponseStatus(HttpStatus.OK)
@@ -19,4 +34,17 @@ public class OrderController {
         return orderQueryService.findById(orderId);
     }
 
+    @PostMapping(consumes = "application/vnd.order-with-product.v1+json")
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrderDetailOutput buyNow(@RequestBody @Valid BuyNowInput input) {
+        String orderId = buyNowApplicationService.buyNow(input);
+        return orderQueryService.findById(orderId);
+    }
+
+    @PostMapping(consumes = "application/vnd.order-with-shopping-cart.v1+json")
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrderDetailOutput checkout(@RequestBody @Valid CheckoutInput input) {
+        String orderId = checkoutApplicationService.checkout(input);
+        return orderQueryService.findById(orderId);
+    }
 }
