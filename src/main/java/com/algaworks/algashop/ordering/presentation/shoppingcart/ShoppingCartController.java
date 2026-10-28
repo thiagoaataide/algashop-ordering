@@ -1,9 +1,7 @@
-package com.algaworks.algashop.ordering.presentation;
+package com.algaworks.algashop.ordering.presentation.shoppingcart;
 
-import com.algaworks.algashop.ordering.application.shoppingcart.management.ShoppingCartInput;
 import com.algaworks.algashop.ordering.application.shoppingcart.management.ShoppingCartItemInput;
 import com.algaworks.algashop.ordering.application.shoppingcart.management.ShoppingCartManagementApplicationService;
-import com.algaworks.algashop.ordering.application.shoppingcart.query.ShoppingCartItemListModel;
 import com.algaworks.algashop.ordering.application.shoppingcart.query.ShoppingCartOutput;
 import com.algaworks.algashop.ordering.application.shoppingcart.query.ShoppingCartQueryService;
 import jakarta.validation.Valid;

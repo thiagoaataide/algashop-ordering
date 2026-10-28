@@ -1,4 +1,4 @@
-package com.algaworks.algashop.ordering.application.shoppingcart.management;
+package com.algaworks.algashop.ordering.presentation.shoppingcart;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
